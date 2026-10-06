@@ -1,0 +1,27 @@
+name: build
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+      - name: Build
+        run: |
+          xcodebuild -project MobiViewClient.xcodeproj -scheme MobiViewClient \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+      - name: Package ipa
+        run: |
+          mkdir Payload
+          cp -R build/Build/Products/Release-iphoneos/MobiViewClient.app Payload/
+          zip -r MobiViewClient.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MobiViewClient
+          path: MobiViewClient.ipa

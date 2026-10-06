@@ -1,0 +1,30 @@
+name: MobiViewClient
+options:
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+targets:
+  MobiViewClient:
+    type: application
+    platform: iOS
+    sources: [Sources]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mobiview.client
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: MobiView
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSLocalNetworkUsageDescription: MobiView łączy się z komputerem w sieci lokalnej.
+        NSBonjourServices:
+          - _mobiview._tcp
