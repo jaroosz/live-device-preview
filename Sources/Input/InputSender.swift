@@ -2,13 +2,14 @@ import Foundation
 import QuartzCore
 import Network
 import UIKit
+import CoreMotion
 
 final class InputSender {
     let touchSource = TouchSource()
-    private var sources: [InputSource] = []
+    private let sources: [InputSource]
     
     private var currentMask: UInt16 = 0
-    var supportedSensors: UInt16 = 1
+    let supportedSensors: UInt16
     private var frameId: UInt32 = 0
     
     private let historyLimit = 3
@@ -17,14 +18,16 @@ final class InputSender {
     private var displayLink: CADisplayLink?
     weak var udpConnection: NWConnection?
     
+    let motionManager = CMMotionManager()
+    
     init() {
-        sources = [
+        let allSources: [InputSource] = [
             touchSource,
-            AccelerometerSource(),
-            GyroscopeSource(),
-            GravitySource(),
-            AttitudeSource(),
-            LinearAccelerationSource(),
+            AccelerometerSource(motionManager: motionManager),
+            GyroscopeSource(motionManager: motionManager),
+            GravitySource(motionManager: motionManager),
+            AttitudeSource(motionManager: motionManager),
+            LinearAccelerationSource(motionManager: motionManager),
             MagneticFieldSource(),
             LightSource(),
             ProximitySource(),
@@ -34,6 +37,13 @@ final class InputSender {
             GamepadSource(),
             KeyboardSource()
         ]
+        self.sources = allSources
+        
+        var mask: UInt16 = 0
+        for source in allSources {
+            if source.isAvailable { mask |= source.bitMask }
+        }
+        self.supportedSensors = mask
     }
     
     func start() {

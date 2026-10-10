@@ -1,8 +1,6 @@
 import Network
 import UIKit
 
-import CoreMotion
-
 final class Session {
     let decoder = Decoder()
     let inputSender = InputSender()
@@ -54,17 +52,7 @@ final class Session {
         let deviceId = UIDevice.current.identifierForVendor?.uuidString
             .replacingOccurrences(of: "-", with: "") ?? UUID().uuidString
             
-        let motion = CMMotionManager()
-        var supportedSensors: UInt16 = 1 // Touch
-        if motion.isAccelerometerAvailable { supportedSensors |= (1 << 1) }
-        if motion.isGyroAvailable { supportedSensors |= (1 << 2) }
-        if motion.isDeviceMotionAvailable {
-            supportedSensors |= (1 << 3) // Gravity
-            supportedSensors |= (1 << 4) // Attitude
-            supportedSensors |= (1 << 5) // LinearAccel
-        }
-        
-        inputSender.supportedSensors = supportedSensors
+        let supportedSensors = inputSender.supportedSensors
         
         let hello: [String: Any] = [
             "type": "hello",
