@@ -14,7 +14,7 @@ final class Decoder {
 
     func waitForKeyframe() { needKey = true }
 
-    // data = jedna klatka H.265 w formacie Annex B
+    // data = one H.265 frame in Annex B format
     func decode(_ data: [UInt8]) {
         var sets: [Int: [UInt8]] = [:]
         var avcc: [UInt8] = []
@@ -71,7 +71,7 @@ final class Decoder {
             sampleSizeEntryCount: 1, sampleSizeArray: &size,
             sampleBufferOut: &sample) == noErr, let sample else { return }
 
-        // Pokaż od razu, bez bufora czasowego
+        // show immediately
         if let attachments = CMSampleBufferGetSampleAttachmentsArray(sample, createIfNecessary: true),
            CFArrayGetCount(attachments) > 0 {
             let dict = unsafeBitCast(CFArrayGetValueAtIndex(attachments, 0), to: CFMutableDictionary.self)
@@ -101,7 +101,7 @@ final class Decoder {
         return status == noErr ? out : nil
     }
 
-    // Annex B -> lista NAL-i (bez kodów startu)
+    // Annex B -> NAL list
     private func split(_ d: [UInt8]) -> [ArraySlice<UInt8>] {
         var result: [ArraySlice<UInt8>] = []
         var start = -1

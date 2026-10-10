@@ -32,7 +32,7 @@ struct ContentView: View {
     var body: some View {
         Group {
             if let session = model.session {
-                VideoView(layer: session.decoder.layer).ignoresSafeArea()
+                VideoView(session: session).ignoresSafeArea()
             } else {
                 List(model.hosts) { host in
                     Button(host.name) { model.connect(host) }
@@ -47,12 +47,14 @@ struct ContentView: View {
 }
 
 struct VideoView: UIViewRepresentable {
-    let layer: AVSampleBufferDisplayLayer
+    let session: Session
 
     func makeUIView(context: Context) -> UIView {
         let view = LayerHostView()
+        view.session = session
+        view.isMultipleTouchEnabled = true
         view.backgroundColor = .black
-        view.layer.addSublayer(layer)
+        view.layer.addSublayer(session.decoder.layer)
         return view
     }
 
@@ -60,11 +62,26 @@ struct VideoView: UIViewRepresentable {
 }
 
 private final class LayerHostView: UIView {
+    weak var session: Session?
+
     override func layoutSubviews() {
         super.layoutSubviews()
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         layer.sublayers?.forEach { $0.frame = bounds }
         CATransaction.commit()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        session?.inputSender.handleTouches(touches, phase: 0, in: self)
+    }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        session?.inputSender.handleTouches(touches, phase: 1, in: self)
+    }
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        session?.inputSender.handleTouches(touches, phase: 2, in: self)
+    }
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        session?.inputSender.handleTouches(touches, phase: 3, in: self)
     }
 }

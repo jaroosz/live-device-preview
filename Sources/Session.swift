@@ -3,6 +3,7 @@ import UIKit
 
 final class Session {
     let decoder = Decoder()
+    let inputSender = InputSender()
     var onClosed: (() -> Void)?
 
     private let queue = DispatchQueue(label: "mobiview.session")
@@ -15,7 +16,7 @@ final class Session {
     private var lastSeq = 0
     private var hasLast = false
 
-    private let headerSize = 29
+    private let headerSize = 31
     private let udpPort: NWEndpoint.Port = 7778
 
     init(endpoint: NWEndpoint) {
@@ -117,10 +118,16 @@ final class Session {
         guard !closed, let host else { close(); return }
         let c = NWConnection(host: host, port: udpPort, using: .udp)
         udp = c
+        inputSender.udpConnection = c
+        
         c.stateUpdateHandler = { [weak self] state in
             switch state {
-            case .ready: self?.receive(c)
-            case .failed, .waiting: self?.reopenUDP(c)
+            case .ready:
+                self?.receive(c)
+                DispatchQueue.main.async { self?.inputSender.start() }
+            case .failed, .waiting:
+                self?.reopenUDP(c)
+                DispatchQueue.main.async { self?.inputSender.stop() }
             default: break
             }
         }
@@ -145,7 +152,6 @@ final class Session {
         }
     }
 
-    // Dopóki nic nie przychodzi, co sekundę prosimy serwer o stream (pakiet 0)
     private func tick() {
         queue.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self, !self.closed else { return }
@@ -162,13 +168,19 @@ final class Session {
 
     private func handle(_ p: [UInt8]) {
         lastPacket = Date()
-        guard p.count > headerSize, p[0] == 1 else { return }
+        guard p.count >= headerSize, p[0] == 1 else { return }
+        
+        let mask = UInt16(le(p, 29, 2))
+        DispatchQueue.main.async {
+            self.inputSender.updateMask(mask)
+        }
+
         let seq = le(p, 1, 4)
         let index = le(p, 21, 2)
         let total = le(p, 23, 2)
         guard total > 0, index < total else { return }
 
-        if hasLast && seq < lastSeq {   // stream wystartował od nowa
+        if hasLast && seq < lastSeq {
             pending.removeAll()
             hasLast = false
             decoder.waitForKeyframe()
