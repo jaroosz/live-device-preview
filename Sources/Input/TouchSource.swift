@@ -1,6 +1,9 @@
 import UIKit
 
 final class TouchSource: InputSource {
+    var isAvailable: Bool { true }
+    var bitMask: UInt16 { 1 }
+    
     private var activeTouches: [UITouch: (id: UInt8, phase: UInt8, x: Float, y: Float)] = [:]
     private var touchIdCounter: UInt8 = 0
     

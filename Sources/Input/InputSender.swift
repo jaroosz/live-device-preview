@@ -5,10 +5,10 @@ import UIKit
 
 final class InputSender {
     let touchSource = TouchSource()
-    private let motionSource = MotionSource()
     private var sources: [InputSource] = []
     
     private var currentMask: UInt16 = 0
+    var supportedSensors: UInt16 = 1
     private var frameId: UInt32 = 0
     
     private let historyLimit = 3
@@ -18,7 +18,22 @@ final class InputSender {
     weak var udpConnection: NWConnection?
     
     init() {
-        sources = [touchSource, motionSource]
+        sources = [
+            touchSource,
+            AccelerometerSource(),
+            GyroscopeSource(),
+            GravitySource(),
+            AttitudeSource(),
+            LinearAccelerationSource(),
+            MagneticFieldSource(),
+            LightSource(),
+            ProximitySource(),
+            PressureSource(),
+            StepCounterSource(),
+            PenSource(),
+            GamepadSource(),
+            KeyboardSource()
+        ]
     }
     
     func start() {
@@ -51,8 +66,10 @@ final class InputSender {
         var fId = frameId.littleEndian
         withUnsafeBytes(of: &fId) { currentFrame.append(contentsOf: $0) }
         
+        let actualMask = currentMask & supportedSensors
+        
         for source in sources {
-            source.appendData(to: &currentFrame, mask: currentMask)
+            source.appendData(to: &currentFrame, mask: actualMask)
         }
         
         frameHistory.append(currentFrame)
@@ -64,7 +81,7 @@ final class InputSender {
         packet.append(3)
         packet.append(UInt8(frameHistory.count))
         
-        var mask = currentMask.littleEndian
+        var mask = actualMask.littleEndian
         withUnsafeBytes(of: &mask) { packet.append(contentsOf: $0) }
         
         for historyFrame in frameHistory {
