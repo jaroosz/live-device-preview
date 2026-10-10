@@ -8,6 +8,7 @@ final class Session {
 
     private let queue = DispatchQueue(label: "mobiview.session")
     private let tcp: NWConnection
+    private let deviceName: String
     private var udp: NWConnection?
     private var host: NWEndpoint.Host?
     private var closed = false
@@ -17,10 +18,11 @@ final class Session {
     private var hasLast = false
 
     private let headerSize = 31
-    private let udpPort: NWEndpoint.Port = 7778
+    private var udpPort: NWEndpoint.Port = 7778
 
-    init(endpoint: NWEndpoint) {
+    init(endpoint: NWEndpoint, deviceName: String) {
         tcp = NWConnection(to: endpoint, using: .tcp)
+        self.deviceName = deviceName
     }
 
     // MARK: - TCP (handshake + heartbeat)
@@ -58,7 +60,7 @@ final class Session {
             "type": "hello",
             "protocolVersion": 1,
             "deviceId": deviceId,
-            "deviceName": UIDevice.current.name,
+            "deviceName": deviceName,
             "model": Session.model,
             "width": Int(screen.width),
             "height": Int(screen.height),
@@ -71,6 +73,11 @@ final class Session {
             guard let data,
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                   json["accepted"] as? Bool == true else { self.close(); return }
+            
+            if let port = json["udpPort"] as? Int, let nwPort = NWEndpoint.Port(rawValue: UInt16(port)) {
+                self.udpPort = nwPort
+            }
+            
             self.startUDP()
             self.tick()
             self.heartbeat()
