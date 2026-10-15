@@ -1,0 +1,20 @@
+{
+    "name": "MobiView.Editor",
+    "rootNamespace": "MobiView.Editor",
+    "references": [
+        "MobiView.Runtime",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
