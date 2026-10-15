@@ -6,7 +6,7 @@ final class Session {
     let inputSender = InputSender()
     var onClosed: (() -> Void)?
 
-    private let queue = DispatchQueue(label: "mobiview.session")
+    private let queue = DispatchQueue(label: "livedevicepreview.session")
     private let tcp: NWConnection
     private let deviceName: String
     private var udp: NWConnection?

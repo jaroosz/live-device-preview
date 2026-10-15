@@ -20,15 +20,15 @@ jobs:
           xcodegen generate
       - name: Build
         run: |
-          xcodebuild -project MobiViewClient.xcodeproj -scheme MobiViewClient \
+          xcodebuild -project LiveDevicePreview.xcodeproj -scheme LiveDevicePreview \
             -configuration Release -destination 'generic/platform=iOS' \
             -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
       - name: Package ipa
         run: |
           mkdir Payload
-          cp -R build/Build/Products/Release-iphoneos/MobiViewClient.app Payload/
-          zip -r MobiViewClient.ipa Payload
+          cp -R build/Build/Products/Release-iphoneos/LiveDevicePreview.app Payload/
+          zip -r LiveDevicePreview.ipa Payload
       - uses: actions/upload-artifact@v4
         with:
-          name: MobiViewClient
-          path: ios/MobiViewClient.ipa
+          name: LiveDevicePreview
+          path: ios/LiveDevicePreview.ipa
