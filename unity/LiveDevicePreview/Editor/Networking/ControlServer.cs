@@ -122,7 +122,7 @@ namespace LiveDevicePreview.Editor
                 {
                     break;
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     client?.Close();
                 }

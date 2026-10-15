@@ -10,8 +10,6 @@ namespace LiveDevicePreview.Editor
         private static int _previousSizeIndex = -1;
         private const string SizeLabel = "Live Device Preview";
 
-        private static int _lockedSizeIndex = -1;
-
         public static void SetAspectRatio(int width, int height)
         {
             var gameViewType = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
