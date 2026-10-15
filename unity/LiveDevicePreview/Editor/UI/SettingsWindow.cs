@@ -51,6 +51,7 @@ namespace LiveDevicePreview.Editor
             {
                 EditorPrefs.SetBool(VisibilityPreferenceKey, newVisible);
                 Discovery.SetVisible(newVisible);
+                PreviewToolbar.RefreshToolbar();
             }
 
             bool showGizmos = EditorPrefs.GetBool("LiveDevicePreview.ShowDebugGizmos", true);
@@ -85,7 +86,7 @@ namespace LiveDevicePreview.Editor
                 EditorPrefs.SetBool("LiveDevicePreview.AutoPorts", newAutoPorts);
 
             EditorGUI.BeginDisabledGroup(newAutoPorts);
-        
+
             int currentTcpPort = EditorPrefs.GetInt("LiveDevicePreview.TcpPort", 7777);
             int newTcpPort = EditorGUILayout.IntField("TCP Port (Control)", currentTcpPort);
             if (newTcpPort != currentTcpPort)
@@ -101,7 +102,7 @@ namespace LiveDevicePreview.Editor
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.TextField("Hardware Codec", "H.265 (NVENC)");
             EditorGUI.EndDisabledGroup();
-        
+
             EditorGUI.EndDisabledGroup();
         }
     }

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Toolbars;
+#if UNITY_6000_7_OR_NEWER
 using UnityEngine.UIElements;
+#endif
 using UnityEngine;
 
 namespace LiveDevicePreview.Editor
@@ -24,7 +26,10 @@ namespace LiveDevicePreview.Editor
         private const string NormalIconName = "mobile-normal";
         private const string RedIconName = "mobile-red";
         private const string GreenIconName = "mobile-green";
+
+#if UNITY_6000_7_OR_NEWER
         private const float DeviceButtonWidth = 150f;
+#endif
 
         static PreviewToolbar()
         {
@@ -66,7 +71,13 @@ namespace LiveDevicePreview.Editor
                 enabled = isVisible && hasValidDevice
             };
 
+#if UNITY_6000_7_OR_NEWER
             yield return new MainToolbarCustomElement(CreateDeviceDropdown);
+#else
+            yield return new MainToolbarDropdown(
+                new MainToolbarContent(GetDeviceButtonText(), "Select target device"),
+                ShowDeviceList);
+#endif
 
             Texture2D gearIcon = EditorGUIUtility.IconContent("SettingsIcon").image as Texture2D;
             yield return new MainToolbarButton(
@@ -248,6 +259,7 @@ namespace LiveDevicePreview.Editor
             RefreshToolbar();
         }
 
+#if UNITY_6000_7_OR_NEWER
         private static VisualElement CreateDeviceDropdown()
         {
             EditorToolbarButton dropdown = null;
@@ -272,8 +284,9 @@ namespace LiveDevicePreview.Editor
 
             return dropdown;
         }
+#endif
 
-        private static void RefreshToolbar()
+        internal static void RefreshToolbar()
         {
             MainToolbar.Refresh(ToolbarElementId);
         }
