@@ -1,8 +1,8 @@
 {
-    "name": "MobiView.Editor",
-    "rootNamespace": "MobiView.Editor",
+    "name": "LiveDevicePreview.Editor",
+    "rootNamespace": "LiveDevicePreview.Editor",
     "references": [
-        "MobiView.Runtime",
+        "LiveDevicePreview",
         "Unity.InputSystem"
     ],
     "includePlatforms": [
@@ -12,7 +12,7 @@
     "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
+    "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

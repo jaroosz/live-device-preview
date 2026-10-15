@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Buffers;
 
-namespace MobiView.Editor.Capture.Encoding
+namespace LiveDevicePreview.Nvenc
 {
     public enum VideoCodec
     {
