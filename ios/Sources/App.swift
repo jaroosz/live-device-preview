@@ -11,7 +11,7 @@ extension Color {
 }
 
 @main
-struct MobiViewApp: App {
+struct LiveDevicePreviewApp: App {
     var body: some Scene {
         WindowGroup { ContentView() }
     }
@@ -61,7 +61,7 @@ struct ContentView: View {
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
                         ZStack {
-                            Text("MobiView")
+                            Text("Live Device Preview")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.unityTitle)
                             

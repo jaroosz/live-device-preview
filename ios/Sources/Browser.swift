@@ -13,7 +13,7 @@ final class Browser {
     private var discoveredHosts: [String: Host] = [:]
 
     func start() {
-        let b = NWBrowser(for: .bonjour(type: "_mobiview._tcp", domain: nil), using: .tcp)
+        let b = NWBrowser(for: .bonjour(type: "_ldpreview._tcp", domain: nil), using: .tcp)
         b.browseResultsChangedHandler = { [weak self] results, _ in
             guard let self = self else { return }
             var currentHosts: [String: Host] = [:]
