@@ -23,8 +23,6 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
-        NSLocalNetworkUsageDescription: Live Device Preview łączy się z komputerem w sieci lokalnej.
+        NSLocalNetworkUsageDescription: Live Device Preview connects with local network.
         NSBonjourServices:
           - _ldpreview._tcp
